@@ -10,7 +10,6 @@ Make sure to install all requirements:
 
     $ pip install -r requirements.txt
 
-NOTICE : Because of Github size limits, please download the model from here: https://www.zpettry.com/bi-lstmchar256256128.h5
 
 Quick start
 -----------
