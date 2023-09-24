@@ -16,7 +16,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 app = flask.Flask(__name__)
 
 # Load the Keras model.
-model_pre = 'bi-lstmchar256256128.h5'
+model_pre ='models/bi-lstmchar256256128.h5'
 model = load_model(model_pre)
 
 def prepare_url(url):
