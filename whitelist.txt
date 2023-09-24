@@ -38229,3 +38229,5 @@ https://www2.efax.com/pricing
 https://www2.efax.com/privacy
 https://www2.efax.com/robots.txt
 https://www2.efax.com/sitemap
+https://www.sjp.ac.lk
+http://science.sjp.ac.lk
