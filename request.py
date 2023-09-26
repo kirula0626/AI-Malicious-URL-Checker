@@ -4,9 +4,14 @@ This file will make a simple request to the Flask API for URL processing.
 """
 import argparse
 import requests
+import validators
 
 def main(url):
-
+    # Check if the URL starts with "http://" or "https://", and add "http://" if not.
+    # Check if the URL is valid and in the correct format.
+    if not validators.url(url):
+        print("Invalid URL format. Please provide a valid URL.")
+        return -1
     # Define URL for Flask API endpoint.
     KERAS_REST_API_URL = "http://127.0.0.1:45000/predict"
 

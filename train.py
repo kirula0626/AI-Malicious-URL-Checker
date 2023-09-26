@@ -5,10 +5,11 @@ This file is for training on the PhishTank data.
 
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+#from tensorflow.keras.preprocessing.text import Tokenizer
+#from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import label_data
+
 
 # Get and process URL data and labels.
 urls = label_data.main()
@@ -26,13 +27,13 @@ print(labels.count(0))
 max_chars = 20000
 maxlen = 128
 
-tokenizer = Tokenizer(num_words=max_chars, char_level=True)
+tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=max_chars, char_level=True)
 tokenizer.fit_on_texts(samples)
 sequences = tokenizer.texts_to_sequences(samples)
 word_index = tokenizer.word_index
 print('Found %s unique tokens.' % len(word_index))
 
-data = pad_sequences(sequences, maxlen=maxlen)
+data = tf.keras.preprocessing.sequence.pad_sequences(sequences, maxlen=maxlen)
 
 labels = np.asarray(labels)
 print('Shape of data tensor:', data.shape)
@@ -56,7 +57,7 @@ y_test = labels[training_samples: training_samples + validation_samples]
 # Define callbacks for Keras.
 callbacks_list = [
     tf.keras.callbacks.ModelCheckpoint(
-        filepath='lstmchar256256128test.h5',
+        filepath='models/bi-lstmchar256256128.h5',
         monitor='val_loss',
         save_best_only=True
     ),
@@ -90,7 +91,7 @@ model.compile(optimizer='adam',
 # Train.
 model.fit(x, y,
           epochs=10,
-          batch_size=1200,
+          batch_size=600,
           callbacks=callbacks_list,
           validation_split=0.20,
           shuffle=True
@@ -100,3 +101,4 @@ model.fit(x, y,
 score, acc = model.evaluate(x_test, y_test, verbose=1, batch_size=1024)
 
 print("Model Accuracy: {:0.2f}%".format(acc * 100))
+

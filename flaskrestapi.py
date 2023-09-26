@@ -8,16 +8,16 @@ import label_data
 import flask
 import json
 import numpy as np
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.preprocessing.text import Tokenizer
+#from tensorflow.keras.models import load_model
+#from tensorflow.keras.preprocessing.sequence import pad_sequences
+#from tensorflow.keras.preprocessing.text import Tokenizer
 
 # Initialize our Flask application and the Keras model.
 app = flask.Flask(__name__)
 
 # Load the Keras model.
 model_pre ='models/bi-lstmchar256256128.h5'
-model = load_model(model_pre)
+model = tf.keras.models.load_model(model_pre)
 
 def prepare_url(url):
 
@@ -35,13 +35,13 @@ def prepare_url(url):
     maxlen = 128
     max_words = 20000
 
-    tokenizer = Tokenizer(num_words=max_words, char_level=True)
+    tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=max_words, char_level=True)
     tokenizer.fit_on_texts(samples)
     sequences = tokenizer.texts_to_sequences(url)
     word_index = tokenizer.word_index
     #print('Found %s unique tokens.' % len(word_index))
 
-    url_prepped = pad_sequences(sequences, maxlen=maxlen)
+    url_prepped = tf.keras.preprocessing.sequence.pad_sequences(sequences, maxlen=maxlen)
     return url_prepped
 
 @app.route("/predict", methods=["POST"])
@@ -68,7 +68,7 @@ def predict():
         prediction = model.predict(url_prepped)
         print(prediction)
         
-        data["predictions"] = []
+        data["predictions"] = [] # type: ignore
         
         if prediction > 0.50:
             result = "URL is probably malicious."
