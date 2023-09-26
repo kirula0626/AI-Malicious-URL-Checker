@@ -102,3 +102,5 @@ score, acc = model.evaluate(x_test, y_test, verbose=1, batch_size=1024)
 
 print("Model Accuracy: {:0.2f}%".format(acc * 100))
 
+#fine error above code
+
