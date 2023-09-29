@@ -90,8 +90,8 @@ model.compile(optimizer='adam',
 
 # Train.
 model.fit(x, y,
-          epochs=10,
-          batch_size=600,
+          epochs=100,
+          batch_size=100,
           callbacks=callbacks_list,
           validation_split=0.20,
           shuffle=True

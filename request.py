@@ -8,7 +8,10 @@ import validators
 
 def main(url):
     # Check if the URL starts with "http://" or "https://", and add "http://" if not.
-    # Check if the URL is valid and in the correct format.
+    if not url.startswith(('http://', 'https://')):
+        url = 'http://' + url
+    
+    # Check if the URL is valid.
     if not validators.url(url):
         print("Invalid URL format. Please provide a valid URL.")
         return -1
