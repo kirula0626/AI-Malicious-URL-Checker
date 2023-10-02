@@ -74,27 +74,7 @@ new_paragraphs = [
     "Learn new skills with our online courses: https://courses.example-education.com/course123.",
     "Need help? Reach out to our support team: support@example-service.com or visit https://support.example-service.com.",
     "Visit our secure portal for sensitive information: https://secure.example-portal.net/login.",
-    "This paragraph contains no URLs."
-    "Visit our website: http://www.example-site.com for more details.",
-    "Check out this product on our e-commerce platform: https://shop.example-store.com/product123.",
-    "For news and updates, follow us on Twitter: @example_twitter and visit our blog at https://blog.example-company.org.",
-    "Join our community forum: https://community.example-forum.net/di3scussion/1234.",
-    "Explore the world with our travel app: https://travel.example-app.io.",
-    "Click here for the latest video: https://www.youtube.com/watch?v=e3xampleVideo123.",
-    "Learn new skills with our online courses: https://courses.example-educatio3n.com/course123.",
-    "Need help? Reach out to our support team: support@example-service.com or visit https://suppor3t.example-service.com.",
-    "Visit our secure portal for sensitive information: https://secure.example-portal.net/login.",
-    "This paragraph contains no URLs."
-    "Visit our website: http://www.example-site.com for more details.",
-    "Check out this product on our e-commerce platform: https://shop.example-store.com/product123.",
-    "For news and updates, follow us on Twitter: @example_twitter and visit our blog at https://blog.exam3ple-company.org.",
-    "Join our community forum: https://community.example-forum.net/discussion/12343.",
-    "Explore the world with our travel app: https://travel.example-app.io.",
-    "Click here for the latest video: https://www.youtube.com/watch?v=exampleVideo1233.",
-    "Learn new skills with our online courses: https://courses.example-education.com/course123.",
-    "Need help? Reach out to our support team: support@example-service.com or visit https://support.example-service.com.",
-    "Visit our secure portal for sensitive information: https://secure.example-portal.net/login.",
-    "This paragraph contains no URLs."
+    
 ]
 
 # Tokenize and preprocess the new paragraphs

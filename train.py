@@ -98,7 +98,7 @@ model.fit(x, y,
           )
 
 # Evaluate model on test data.
-score, acc = model.evaluate(x_test, y_test, verbose=1, batch_size=1024)
+score, acc = model.evaluate(x_test, y_test, verbose=1, batch_size=350)
 
 print("Model Accuracy: {:0.2f}%".format(acc * 100))
 
