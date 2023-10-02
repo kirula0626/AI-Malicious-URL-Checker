@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>URL Maliciousness Checker</title>
+</head>
+
+<body>
+    <h2>URL Maliciousness Checker</h2>
+    <form method="post">
+        URL: <input type="text" name="url" required><br><br>
+        <input type="submit" value="Check">
+    </form>
+    {% if result %}
+    <h3>Result for {{ url }}:</h3>
+    <p>{{ result }}</p>
+    {% endif %} {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+</body>
+
+</html>
