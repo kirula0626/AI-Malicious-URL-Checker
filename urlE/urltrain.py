@@ -6,7 +6,7 @@ output_file_path = 'output.txt'
 with open(input_file_path, 'r') as input_file, open(output_file_path, 'w') as output_file:
     # Read each line from the input file, append ',,,,,,' and write to the output file
     for line in input_file:
-        modified_line = line.strip() + ',,,,,,\n'  # Add ',,,,,,' and newline character
+        modified_line = ','+line.strip() + ',,,,,,\n'  # Add ',,,,,,' and newline character
         output_file.write(modified_line)
 
 print("File modified and saved successfully.")
