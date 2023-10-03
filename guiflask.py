@@ -1,33 +1,25 @@
 import subprocess
-import json
 import flask
-from flask import request
+from flask import request, render_template, jsonify
 import validators
-import tkinter as tk
-from tkinter import messagebox
 import tensorflow as tf
 import label_data
 import numpy as np
-from flask import request, render_template
-
 
 app = flask.Flask(__name__)
 
-model_pre ='models/bi-lstmchar256256128.h5'
+# Load the pre-trained Keras model
+model_pre = 'models/bi-lstmchar256256128.h5'
 model = tf.keras.models.load_model(model_pre)
 
+# Function to prepare URL for prediction
 def prepare_url(url):
-
     urlz = label_data.main()
-
     samples = []
     labels = []
     for k, v in urlz.items():
         samples.append(k)
         labels.append(v)
-
-    #print(len(samples))
-    #print(len(labels))
 
     maxlen = 128
     max_words = 20000
@@ -35,44 +27,72 @@ def prepare_url(url):
     tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=max_words, char_level=True)
     tokenizer.fit_on_texts(samples)
     sequences = tokenizer.texts_to_sequences(url)
-    word_index = tokenizer.word_index
-    #print('Found %s unique tokens.' % len(word_index))
-
     url_prepped = tf.keras.preprocessing.sequence.pad_sequences(sequences, maxlen=maxlen)
     return url_prepped
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    # Initialize the dictionary for the response.
     data = {"success": False}
 
+    # Check if POST request.
     if flask.request.method == "POST":
+        # Grab and process the incoming json.
         incoming = flask.request.get_json()
-        url = incoming.get("url")
+        urlz = []
+        url = incoming["url"]
 
-        if not url or not validators.url(url):
-            data["error"] = "Invalid URL format. Please provide a valid URL."
-            return flask.jsonify(data)
+        urlz.append(url)
 
-        try:
-            url_prepped = prepare_url([url])
-            prediction = model.predict(url_prepped)
+        # Process and prepare the URL.
+        url_prepped = prepare_url(urlz)
 
-            result = "URL is probably malicious." if prediction > 0.50 else "URL is probably NOT malicious."
-            data["result"] = result
-            data["success"] = True
-        except Exception as e:
-            data["error"] = f"Error processing URL: {str(e)}"
+        # Classify the URL and make the prediction.
+        prediction = model.predict(url_prepped)
+        
+        data["predictions"] = []  # Initialize predictions list
+        
+        # Determine the result and format response data.
+        if prediction > 0.50:
+            result = "URL is probably malicious."
+        else:
+            result = "URL is probably NOT malicious."
+        
+        # Check for base URL. Accuracy is not as great.
+        split = url.split("//")
+        split2 = split[1]
+        if "/" not in split2:
+            result = "Base URLs cannot be accurately determined."
+        
+        # Processes prediction probability.
+        prediction_percentage = float(prediction) * 100
+        
+        if result == "Base URLs cannot be accurately determined.":
+            r = {"result": result, "url": url}
+        else:
+            r = {"result": result, "malicious percentage": prediction_percentage, "url": url}
+        data["predictions"].append(r)
 
+        # Show that the request was a success.
+        data["success"] = True
+
+    # Return the data as a JSON response.
     return flask.jsonify(data)
 
+# Web interface route
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         url = request.form["url"]
 
-        if not url or not validators.url(url):
-            return render_template("index.html", error="Invalid URL format. Please provide a valid URL.")
-
+        # Check if the URL starts with "http://" or "https://", and add "http://" if not.
+        if not url.startswith(('http://', 'https://')):
+            url = 'http://' + url
+    
+    # Check if the URL is valid.
+        if not validators.url(url):
+            print("Invalid URL format. Please provide a valid URL.")
+            return -1
         try:
             result = subprocess.run(["python", "request.py", "-u", url], capture_output=True, text=True)
             output = result.stdout.strip()
@@ -81,6 +101,7 @@ def index():
             return render_template("index.html", error=f"Error processing URL: {str(e)}")
 
     return render_template("index.html", result=None, error=None, url=None)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=45000)
