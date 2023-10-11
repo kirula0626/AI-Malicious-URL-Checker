@@ -12,14 +12,16 @@ app = flask.Flask(__name__)
 model_pre = 'models/bi-lstmchar256256128.h5'
 model = tf.keras.models.load_model(model_pre)
 
-# Function to prepare URL for prediction
+# Modified function to prepare URL for prediction
 def prepare_url(url):
     urlz = label_data.main()
     samples = []
     labels = []
     for k, v in urlz.items():
-        samples.append(k)
-        labels.append(v)
+        # Check if the URL is a string and not a float
+        if isinstance(k, str):
+            samples.append(k)
+            labels.append(v)
 
     maxlen = 128
     max_words = 20000
@@ -29,6 +31,7 @@ def prepare_url(url):
     sequences = tokenizer.texts_to_sequences(url)
     url_prepped = tf.keras.preprocessing.sequence.pad_sequences(sequences, maxlen=maxlen)
     return url_prepped
+
 
 @app.route("/predict", methods=["POST"])
 def predict():

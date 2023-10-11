@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>URL Extractor</title>
+</head>
+
+<body>
+    <h2>URL Extractor</h2>
+    <textarea id="inputTextArea" rows="5" cols="50"></textarea><br><br>
+    <button onclick="extractUrls()">Extract URLs</button><br><br>
+    <h3>Extracted URLs:</h3>
+    <ul id="extractedUrls"></ul>
+
+    <script>
+        function extractUrls() {
+            var inputText = document.getElementById('inputTextArea').value;
+            fetch('/process_urls', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: inputText }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var extractedUrlsList = document.getElementById('extractedUrls');
+                extractedUrlsList.innerHTML = '';
+                data.extracted_urls.forEach(url => {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = url;
+                    extractedUrlsList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+
+</html>
