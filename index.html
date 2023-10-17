@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>URL Maliciousness Checker</title>
+</head>
+
+<body>
+    <h2>URL Maliciousness Checker</h2>
+    <form id="urlForm">
+        URL: <input type="text" id="urlInput" required><br><br>
+        <input type="submit" value="Check">
+    </form>
+
+    <!-- Table to display processed URLs -->
+    <h3>Processed URLs:</h3>
+    <table id="resultTable" border="1">
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Malicious</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody id="resultTableBody"></tbody>
+    </table>
+
+    <script>
+        // JavaScript code to handle form submission and fetch processed URLs
+        const urlForm = document.getElementById("urlForm");
+        const urlInput = document.getElementById("urlInput");
+        const resultTableBody = document.getElementById("resultTableBody");
+
+        urlForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const url = urlInput.value;
+
+            // Make AJAX request to Flask API to process URL
+            fetch("http://127.0.0.1:45000/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        url: url
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Refresh processed URLs table
+                        refreshProcessedUrls();
+                    } else {
+                        console.log("Request failed");
+                    }
+                })
+                .catch(error => console.error(error));
+        });
+
+        // Function to fetch and display processed URLs in the table
+        function refreshProcessedUrls() {
+            fetch("http://127.0.0.1:45000/processed_urls")
+                .then(response => response.json())
+                .then(data => {
+                    const processedUrls = data.processed_urls;
+                    resultTableBody.innerHTML = ""; // Clear table body
+
+                    // Populate table with processed URLs
+                    processedUrls.forEach(url => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${url.url}</td>
+                            <td>${url.malicious ? "Yes" : "No"}</td>
+                            <td>${url.percentage}%</td>
+                        `;
+                        resultTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Refresh processed URLs table when the page loads
+        window.onload = function() {
+            refreshProcessedUrls();
+        };
+    </script>
+</body>
+
+</html>
