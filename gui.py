@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import re
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 @app.route('/')
 def index():
@@ -21,5 +21,5 @@ def process_urls():
     # Process the extracted URLs here if needed
     return jsonify({'extracted_urls': cleaned_urls})
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
