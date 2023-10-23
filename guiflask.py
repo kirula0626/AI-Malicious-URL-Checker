@@ -56,7 +56,9 @@ def predict():
         data["predictions"] = []  # Initialize predictions list
         
         # Determine the result and format response data.
-        if prediction > 0.50:
+        if prediction > 0.90:
+            result = "URL is probably malicious and Dangerous!"
+        elif prediction > 0.50:
             result = "URL is probably malicious."
         else:
             result = "URL is probably NOT malicious."
