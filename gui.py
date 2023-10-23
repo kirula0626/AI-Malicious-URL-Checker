@@ -16,10 +16,11 @@ def process_urls():
     extracted_urls = re.findall(url_pattern, input_text)
 
     # Remove quotation marks from the extracted URLs
-    cleaned_urls = [url.rstrip('.').rstrip('/').rstrip('"') for url in extracted_urls] 
+    cleaned_urls = [url.rstrip('.').rstrip('///').rstrip('"') for url in extracted_urls] 
 
     # Process the extracted URLs here if needed
     return jsonify({'extracted_urls': cleaned_urls})
 
 if __name__ == '__main__':
     app.run(debug=True)
+    

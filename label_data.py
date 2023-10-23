@@ -4,6 +4,15 @@ This file gathers data to be used for pre-processing in training and prediction.
 """
 import pandas as pd
 
+def extract_url_from_csv_row(row):
+    # Assuming URLs are in the second column and in the specified format
+    if isinstance(row, str):
+        url = row.strip(',')
+        return url
+    else:
+        # Handle cases where the value is not a string (e.g., NaN or float)
+        return str(row).strip(',')
+
 def main():
     urls = {}
 
@@ -15,7 +24,8 @@ def main():
         
         # Assign 0 for non-malicious and 1 as malicious for supervised learning.
         for url in blacklist['url']:
-            urls[url] = 1
+            extracted_url = extract_url_from_csv_row(url)
+            urls[extracted_url] = 1
     except FileNotFoundError:
         print(f"Error: {blacklist_file} not found. Make sure the file exists.")
 
