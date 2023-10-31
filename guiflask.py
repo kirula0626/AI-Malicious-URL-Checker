@@ -9,7 +9,7 @@ import numpy as np
 app = flask.Flask(__name__)
 
 # Load the pre-trained Keras model
-model_pre = 'models/bi-lstmchar256256128.h5'
+model_pre = 'models/bi-lstmchar256256128V2.h5'
 model = tf.keras.models.load_model(model_pre)
 
 # Modified function to prepare URL for prediction
@@ -93,7 +93,6 @@ def index():
         # Check if the URL starts with "http://" or "https://", and add "http://" if not.
         if not url.startswith(('http://', 'https://')):
             url = 'http://' + url
-    
     # Check if the URL is valid.
         if not validators.url(url):
             print("Invalid URL format. Please provide a valid URL.")
@@ -110,3 +109,4 @@ def index():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=45000)
+    

@@ -12,6 +12,9 @@
     <h3>Extracted URLs:</h3>
     <ul id="extractedUrls"></ul>
 
+    <h3>JSON Output:</h3>
+    <pre id="jsonOutput"></pre>
+
     <script>
         function extractUrls() {
             var inputText = document.getElementById('inputTextArea').value;
@@ -25,15 +28,44 @@
             .then(response => response.json())
             .then(data => {
                 var extractedUrlsList = document.getElementById('extractedUrls');
-                extractedUrlsList.innerHTML = '';
-                data.extracted_urls.forEach(url => {
+                extractedUrlsList.innerHTML = ''; // Clear the previous list
+
+                var table = document.createElement('table');
+                table.border = "1";
+
+                var header = table.createTHead();
+                var row = header.insertRow(0);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                cell1.innerHTML = "URL";
+                cell2.innerHTML = "Result";
+                cell3.innerHTML = "Malicious Percentage";
+
+                for (var i = 0; i < data.extracted_urls.length; i++) {
+                    var urlData = data.extracted_urls[i];
+                    var url = urlData.url;
+                    var result = urlData.result;
+                    var maliciousPercentage = urlData['malicious percentage'];
+
                     var listItem = document.createElement('li');
                     listItem.textContent = url;
                     extractedUrlsList.appendChild(listItem);
-                });
+
+                    var row = table.insertRow(i + 1);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    cell1.innerHTML = url;
+                    cell2.innerHTML = result;
+                    cell3.innerHTML = maliciousPercentage;
+                }
+
+                document.body.appendChild(table);
             })
             .catch(error => console.error('Error:', error));
         }
+
     </script>
 </body>
 
