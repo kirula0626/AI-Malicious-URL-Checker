@@ -101,4 +101,4 @@ def predict():
 # Start the server.
 if __name__ == "__main__":
     print("Starting the server and loading the model...")
-    app.run(host='0.0.0.0', port=45000)
+    app.run(host='0.0.0.0', port=5000)

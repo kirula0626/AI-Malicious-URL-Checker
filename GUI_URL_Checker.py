@@ -1,76 +1,15 @@
-from flask import Flask, render_template, request, jsonify
-import re
+import subprocess
 import flask
+from flask import request, render_template, jsonify
 import validators
 import tensorflow as tf
 import label_data
 import numpy as np
-import subprocess
-from flask import Response
-import json
-# NEW UPDATES
-def clean_string(s):
-    chars_to_remove = ",'.\""
-    cleaned_string = s.rstrip(chars_to_remove)
-    return cleaned_string
 
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return render_template('indexs.html')
-
-@app.route('/process_urls', methods=['POST'])
-def process_urls():
-    data = request.json
-
-    input_text = data.get('text', '')
-    url_pattern = r'https?://\S+|www\.\S+(?=\W|$)'
-    extracted_urls = re.findall(url_pattern, input_text)
-
-    # Remove quotation marks from the extracted URLs
-    cleaned_urls = [url.rstrip('."').rstrip('///').rstrip('"') for url in extracted_urls] 
-    cleaned_urls = [clean_string(url) for url in cleaned_urls]
-        
-    print("cleaned_urls", cleaned_urls)
-
-    # validate URLs
-    validated_urls = []
-    for url in cleaned_urls:
-        url = url.replace("'", "")
-        print("URL", url)
-
-        if not url.startswith(('http://', 'https://')):
-                url = 'http://' + url
-        
-        # Check if the URL is valid.
-        # print(url)
-        if not validators.url(url):
-            print("Invalid URL format. Please provide a valid URL.")
-            return Response('-1', status=400, content_type='text/plain')
-
-        validated_urls.append(url)
-    
-    print("validated URLs", validated_urls)
-    try:
-        print("Before subprocess.run")
-        result = subprocess.run(["python", "request.py", "-u"] + validated_urls, capture_output=True, text=True)
-        output = result.stdout.strip()
-
-        fixed_json_string = output.replace("'", '"')
-        parsed_output = json.loads(fixed_json_string)
-
-        print("After subprocess.run")
-        print("OUTPUT_123", parsed_output)
-
-        # return render_template("indexs.html", data=parsed_output)
-        return jsonify({'extracted_urls': parsed_output})
-    except Exception as e:
-        return render_template("indexs.html", data=f"Error processing URL: {str(e)}")
-
+app = flask.Flask(__name__)
 
 # Load the pre-trained Keras model
-model_pre = 'models/bi-lstmchar256256128.h5'
+model_pre = 'models/bi-lstmchar256256128V2.h5'
 model = tf.keras.models.load_model(model_pre)
 
 # Modified function to prepare URL for prediction
@@ -106,8 +45,6 @@ def predict():
         urlz = []
         url = incoming["url"]
 
-        print("INCOMING URL", url)
-
         urlz.append(url)
 
         # Process and prepare the URL.
@@ -125,7 +62,6 @@ def predict():
             result = "URL is probably malicious."
         else:
             result = "URL is probably NOT malicious."
-        
         
         # Check for base URL. Accuracy is not as great.
         split = url.split("//")
@@ -148,6 +84,29 @@ def predict():
     # Return the data as a JSON response.
     return flask.jsonify(data)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Web interface route
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        url = request.form["url"]
+
+        # Check if the URL starts with "http://" or "https://", and add "http://" if not.
+        if not url.startswith(('http://', 'https://')):
+            url = 'http://' + url
+    # Check if the URL is valid.
+        if not validators.url(url):
+            print("Invalid URL format. Please provide a valid URL.")
+            return -1
+        try:
+            result = subprocess.run(["python", "request.py", "-u", url], capture_output=True, text=True)
+            output = result.stdout.strip()
+            return render_template("index.html", result=output, url=url)
+        except Exception as e:
+            return render_template("index.html", error=f"Error processing URL: {str(e)}")
+
+    return render_template("index.html", result=None, error=None, url=None)
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
     
