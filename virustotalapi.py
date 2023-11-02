@@ -3,7 +3,7 @@
 import requests
 
 API_KEY = '8cdc3b3d6b91d294b3f0a8d3fe994a752505d2b320aa55ea15d966086366600b'
-url_to_check = 'https://verfolgen.sie.die.paketdetails.4-232-168-189.cprapid.com/dpd/update.php'
+url_to_check = 'https://useraceptions2.000webhostapp.com/cntre.html'
 
 params = {
     'apikey': API_KEY,

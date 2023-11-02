@@ -40,8 +40,8 @@ print('Shape of data tensor:', data.shape)
 print('Shape of label tensor:', labels.shape)
 
 # Divide data between training, cross-validation, and test data.
-training_samples = int(len(samples) * 0.95)
-validation_samples = int(len(labels) * 0.05)
+training_samples = int(len(samples) * 0.80)
+validation_samples = int(len(labels) * 0.20)
 print(training_samples, validation_samples)
 
 indices = np.arange(data.shape[0])
@@ -88,14 +88,22 @@ model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
-# Train.
-model.fit(x, y,
-          epochs=10,
-          batch_size=350,
-          callbacks=callbacks_list,
-          validation_split=0.20,
-          shuffle=True
-          )
+# Implement early stopping callback
+early_stopping = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss',
+    patience=2,
+    mode='min',
+    restore_best_weights=True
+)
+
+# Train the model with early stopping callback
+history = model.fit(x, y,
+                    epochs=10,
+                    batch_size=350,
+                    callbacks=[early_stopping],
+                    validation_split=0.20,
+                    shuffle=True
+)
 
 # Evaluate model on test data.
 score, acc = model.evaluate(x_test, y_test, verbose=1, batch_size=350)

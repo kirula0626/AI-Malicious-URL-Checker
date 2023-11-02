@@ -46,7 +46,7 @@
                     var urlData = data.extracted_urls[i];
                     var url = urlData.url;
                     var result = urlData.result;
-                    var maliciousPercentage = urlData['malicious percentage'];
+                    var maliciousPercentage = parseFloat(urlData['malicious percentage']).toFixed(2); // Round to 2 decimal places
 
                     var listItem = document.createElement('li');
                     listItem.textContent = url;
@@ -58,7 +58,7 @@
                     var cell3 = row.insertCell(2);
                     cell1.innerHTML = url;
                     cell2.innerHTML = result;
-                    cell3.innerHTML = maliciousPercentage;
+                    cell3.innerHTML = maliciousPercentage+"%";
                 }
 
                 document.body.appendChild(table);

@@ -70,7 +70,7 @@ def process_urls():
 
 
 # Load the pre-trained Keras model
-model_pre = 'models/bi-lstmchar256256128V2.h5'
+model_pre = 'models/bi-lstmchar256256128V2.h5'  
 model = tf.keras.models.load_model(model_pre)
 
 # Modified function to prepare URL for prediction
