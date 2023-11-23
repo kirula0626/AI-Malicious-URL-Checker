@@ -3,7 +3,7 @@
 Requirements
 ------------
 
-This code was created with Python 3.6.7. Other versions of Python 3 might also work.  You can have multiple Python
+This code was created with Python 3.8 Other versions of Python 3 might also work.  You can have multiple Python
 versions (2.x and 3.x) installed on the same system without problems.
 
 Make sure to install all requirements:
