@@ -16,13 +16,14 @@
 
     <input type="radio" id="fileUploadOption" name="inputOption"> Upload EML File
     <br>
-    <input type="file" id="emlFileInput" style="display:none;">
+    <input type="file" id="emlFileInput" style="display:none;" accept=".eml">
     <br>
     <button id="browseButton" disabled>Select File</button>
 
     <br><br>
 
-    <button onclick="extractUrls()">Extract URLs</button><br><br>
+    <button onclick="extractUrls()">Extract URLs</button>
+    <button id="refreshButton" onclick="refreshPage()">Refresh</button><br><br>
 
     <h3>Extracted URLs:</h3>
     <ul id="extractedUrls"></ul>
@@ -64,6 +65,14 @@
                 var fileName = fileInput.files[0].name;
                 var shortFileName = fileName.length > 10 ? fileName.substring(0, 10) + '...' : fileName;
                 var fileExtension = fileName.split('.').pop();
+
+                if (fileExtension.toLowerCase() !== 'eml') {
+                    alert('Please select an EML file.');
+                    fileInput.value = ''; // Clear the selected file
+                    browseButton.textContent = 'Select File';
+                    return;
+                }
+
                 browseButton.textContent = shortFileName + '.' + fileExtension;
             } else {
                 browseButton.textContent = "Select File";
@@ -73,7 +82,6 @@
         document.getElementById('browseButton').addEventListener('click', function () {
             document.getElementById('emlFileInput').click();
         });
-
 
         // Function to extract URLs
         function extractUrls() {
@@ -189,6 +197,10 @@
                     document.body.appendChild(table);
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        function refreshPage() {
+            location.reload();
         }
     </script>
 </body>

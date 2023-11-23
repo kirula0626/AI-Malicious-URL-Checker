@@ -14,11 +14,18 @@ def clean_string(s):
     cleaned_string = s.rstrip(chars_to_remove)
     return cleaned_string
 
+def add_trailing_slash_if_missing(url):
+    # Check if the URL ends with a slash
+    if not url.endswith('/'):
+        # Add a trailing slash to the URL
+        url += '/'
+    return url
+
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('indexs.html')
+    return render_template('test.html')
 
 @app.route('/process_urls', methods=['POST'])
 def process_urls():
@@ -41,7 +48,10 @@ def process_urls():
         print("URL", url)
 
         if not url.startswith(('http://', 'https://')):
-                url = 'http://' + url
+                url = 'https://' + url
+        
+        # Add a trailing slash to the URL if missing
+        url = add_trailing_slash_if_missing(url)
         
         # Check if the URL is valid.
         # print(url)

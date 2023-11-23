@@ -8,7 +8,8 @@
 <body>
     <h2>URL Extractor</h2>
     <textarea id="inputTextArea" rows="5" cols="50"></textarea><br><br>
-    <button onclick="extractUrls()">Extract URLs</button><br><br>
+    <button onclick="extractUrls()">Extract URLs</button>
+    <button id="refreshButton" onclick="refreshPage()">Refresh</button><br><br>
     <h3>Extracted URLs:</h3>
     <ul id="extractedUrls"></ul>
 
@@ -64,6 +65,10 @@
                 document.body.appendChild(table);
             })
             .catch(error => console.error('Error:', error));
+        }
+
+        function refreshPage() {
+            location.reload();
         }
 
     </script>
