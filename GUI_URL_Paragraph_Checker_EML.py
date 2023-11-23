@@ -1,3 +1,4 @@
+import quopri
 from flask import Flask, render_template, request, jsonify
 import re
 import flask
@@ -8,7 +9,27 @@ import numpy as np
 import subprocess
 from flask import Response
 import json
+
+LINK_REGEX = r'href=\"((?:\S)*)\"'
 # NEW UPDATES
+def get_links(mail_data):
+    '''Get Links from mail data'''
+
+    # If content of eml file is Encoded -> Decode
+    if "Content-Transfer-Encoding" in mail_data:
+        mail_data = str(quopri.decodestring(mail_data)) # Decode
+
+    # Find the Links    
+    links = re.findall(LINK_REGEX, mail_data)
+
+    # Remove Duplicates
+    links = list(dict.fromkeys(links))
+    # Remove Empty Values
+    links = list(filter(None, links))
+
+    return links
+
+
 def clean_string(s):
     chars_to_remove = ",'.\""
     cleaned_string = s.rstrip(chars_to_remove)
@@ -30,15 +51,27 @@ def index():
 @app.route('/process_urls', methods=['POST'])
 def process_urls():
     data = request.json
-
     input_text = data.get('text', '')
-    url_pattern = r'https?://\S+|www\.\S+(?=\W|$)'
-    extracted_urls = re.findall(url_pattern, input_text)
+       # Check if the flag 'fromEmlFile' is present in the JSON payload
+    is_from_eml_file = data.get('fromEmlFile', True)
+
+    if is_from_eml_file:
+        # Handle the data coming from the .eml file
+        # Call the get_links function or perform actions specific to .eml file data
+        extracted_urls = get_links(input_text)
+        cleaned_urls = extracted_urls
+        # Additional operations related to .eml file data
+    else:
+        # Handle the data coming from another source (like the text area)
+        # Perform operations specific to this type of data
+        url_pattern = r'https?://\S+|www\.\S+(?=\W|$)'
+        extracted_urls = re.findall(url_pattern, input_text)
+        cleaned_urls = [url.rstrip('."').rstrip('///').rstrip('"') for url in extracted_urls] 
+        cleaned_urls = [clean_string(url) for url in cleaned_urls]
+        # Additional operations for non-.eml file data
 
     # Remove quotation marks from the extracted URLs
-    cleaned_urls = [url.rstrip('."').rstrip('///').rstrip('"') for url in extracted_urls] 
-    cleaned_urls = [clean_string(url) for url in cleaned_urls]
-        
+    cleaned_urls = list(set(cleaned_urls))
     print("cleaned_urls", cleaned_urls)
 
     # validate URLs
