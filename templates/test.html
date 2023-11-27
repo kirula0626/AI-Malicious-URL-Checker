@@ -2,45 +2,135 @@
 <html>
 
 <head>
-    <title>URL Extractor</title>
+    <title>AI-Malicious-URL-Checker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="https://www.google.com/url?sa=i&url=https%3A%2F%2Ficonscout.com%2Ficons%2Furl-check&psig=AOvVaw0LPwuu-3sm78gaD_CynHLZ&ust=1701142909067000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIjxpKih44IDFQAAAAAdAAAAABAJ">
     <style>
-        table {
-            width: 100%;
-            table-layout: auto;
-            border-collapse: collapse;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
         }
 
-        th, td {
-            border: 1px solid black;
-            word-wrap: break-word;
+        h1 {
+            text-align: center;
+            color: #008080;
+        }
+
+        input[type="radio"],
+        input[type="file"],
+        textarea {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="radio"]:checked+label {
+            font-weight: bold;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #008080;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #005353;
+        }
+
+        #extractedUrls {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
         }
 
         th.url-column {
             width: 60%;
             max-width: 60%;
-            word-wrap: normal;
+            word-wrap: break-word;
         }
-        /* Media queries for responsive design */
+
         @media only screen and (max-width: 600px) {
-            th, td {
+            th,
+            td {
                 display: block;
                 width: 100%;
             }
+        }
+
+        /* Additional styling for the sections */
+        #extractedUrlsHeader,
+        #outputHeader {
+            color: #008080;
+            margin-top: 30px;
+        }
+
+        #extractedUrls,
+        #jsonOutput {
+            display: none;
+        }
+
+        #extractedUrlsList {
+            padding-left: 20px;
+            color: #005353;
+        }
+
+        #jsonOutput {
+            white-space: pre-wrap;
+            font-size: 14px;
+            overflow: auto;
         }
     </style>
 </head>
 
 <body>
-    <h2>URL Extractor</h2>
+    <h1>AI-Malicious-URL-Checker</h1>
 
-    <input type="radio" id="textAreaOption" name="inputOption" checked> Text Area
+    <label for="textAreaOption">
+        <input type="radio" id="textAreaOption" name="inputOption" checked> Text Area
+    </label>
     <br>
     <textarea id="inputTextArea" rows="5" cols="50"></textarea>
 
     <br><br>
 
-    <input type="radio" id="fileUploadOption" name="inputOption"> Upload EML File
+    <label for="fileUploadOption">
+        <input type="radio" id="fileUploadOption" name="inputOption"> Upload EML File
+    </label>
     <br>
     <input type="file" id="emlFileInput" style="display:none;" accept=".eml">
     <br>
@@ -51,13 +141,18 @@
     <button onclick="extractUrls()">Extract URLs</button>
     <button id="refreshButton" onclick="refreshPage()">Refresh</button><br><br>
 
-    <h3>Extracted URLs:</h3>
-    <ul id="extractedUrls"></ul>
+    <!-- Section for Extracted URLs initially hidden -->
+    <h3 style="display: none;" id="extractedUrlsHeader">Extracted URLs:</h3>
+    <ul id="extractedUrls" style="display: none;"></ul>
 
-    <h3>JSON Output:</h3>
-    <pre id="jsonOutput"></pre>
-
+    <!-- Section for Output initially hidden -->
+    <h3 style="display: none;" id="outputHeader">Output:</h3>
+    <pre id="jsonOutput" style="display: none;"></pre>
     <script>
+        function toggleVisibility(elementId, isVisible) {
+            var element = document.getElementById(elementId);
+            element.style.display = isVisible ? 'block' : 'none';
+        }
         // Function to toggle input options based on user's choice
         function toggleInputOption() {
             var textAreaOption = document.getElementById('textAreaOption');
@@ -135,6 +230,9 @@
 
             // Fetch request for text area input (similar to what you had before)
             fetchData(inputText, fromEmlFile);
+            // Show Extracted URLs and Output sections after extracting URLs
+            toggleVisibility('extractedUrls', true);
+            toggleVisibility('jsonOutput', true);
         }
 
         function fetchData(inputText, fromEmlFile) {
